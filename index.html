@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QuoteReplyNow - Fast Quote & Follow-Up Generator</title>
+  <meta name="description" content="Generate polished quotes, follow-up texts, and review requests for local service businesses in seconds.">
+  <style>
+    :root { --bg:#0f172a; --card:#111827; --muted:#94a3b8; --text:#f8fafc; --accent:#38bdf8; --line:#334155; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:linear-gradient(135deg,#020617,#0f172a); color:var(--text); }
+    .wrap { max-width:1100px; margin:0 auto; padding:32px 18px 60px; }
+    header { display:flex; justify-content:space-between; gap:16px; align-items:center; margin-bottom:36px; }
+    .brand { font-weight:800; font-size:22px; letter-spacing:-.03em; }
+    .pill { color:#bae6fd; border:1px solid #075985; background:#082f49; border-radius:999px; padding:8px 12px; font-size:13px; }
+    .hero { display:grid; grid-template-columns:1.05fr .95fr; gap:24px; align-items:start; }
+    h1 { font-size:clamp(38px,6vw,64px); line-height:.95; margin:0 0 18px; letter-spacing:-.06em; }
+    p { color:#cbd5e1; line-height:1.6; font-size:17px; }
+    .card { background:rgba(15,23,42,.86); border:1px solid var(--line); border-radius:22px; padding:22px; box-shadow:0 20px 70px rgba(0,0,0,.28); }
+    label { display:block; font-size:13px; color:#cbd5e1; margin:13px 0 6px; }
+    input, textarea, select { width:100%; border:1px solid #475569; background:#020617; color:var(--text); border-radius:12px; padding:12px 13px; font:inherit; }
+    textarea { min-height:88px; resize:vertical; }
+    button, .btn { border:0; background:var(--accent); color:#00111a; font-weight:800; padding:13px 16px; border-radius:13px; cursor:pointer; text-decoration:none; display:inline-block; }
+    button.secondary { background:#1e293b; color:#e2e8f0; border:1px solid #475569; }
+    .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+    .out { white-space:pre-wrap; background:#020617; border:1px solid #334155; border-radius:16px; padding:16px; min-height:220px; color:#e2e8f0; }
+    .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:24px; }
+    .mini { background:rgba(30,41,59,.7); border:1px solid #334155; border-radius:18px; padding:16px; }
+    .mini b { color:white; }
+    footer { margin-top:34px; color:#94a3b8; font-size:13px; }
+    @media (max-width:850px){ .hero,.grid3{grid-template-columns:1fr;} header{align-items:flex-start; flex-direction:column;} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">QuoteReplyNow</div>
+      <div class="pill">For cleaners, landscapers, mobile detailers, handymen, tutors & freelancers</div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h1>Turn messy job details into a polished quote in 30 seconds.</h1>
+        <p>Local service owners lose jobs when replies are slow or unprofessional. Enter a few details and instantly generate a quote, follow-up text, and review request you can copy into SMS, email, Facebook, Instagram, or WhatsApp.</p>
+        <div class="actions">
+          <a class="btn" href="#app">Use the free generator</a>
+          <a class="btn" id="buyLinkTop" href="#" target="_blank" rel="noopener">Get Pro Templates - $5</a>
+        </div>
+        <div class="grid3">
+          <div class="mini"><b>Free</b><br>Basic quote + follow-up generator.</div>
+          <div class="mini"><b>Pro</b><br>Upsell, deposit, no-show, and review templates.</div>
+          <div class="mini"><b>Today</b><br>Host free, share link, collect payments.</div>
+        </div>
+      </div>
+
+      <div class="card" id="app">
+        <h2 style="margin-top:0">Generate your message</h2>
+        <label>Business type</label>
+        <select id="business">
+          <option>house cleaner</option>
+          <option>mobile car detailer</option>
+          <option>landscaper</option>
+          <option>handyman</option>
+          <option>tutor</option>
+          <option>photographer</option>
+          <option>freelancer</option>
+        </select>
+
+        <label>Customer name</label>
+        <input id="customer" placeholder="Jordan" />
+
+        <label>Job details</label>
+        <textarea id="details" placeholder="Example: 3-bedroom deep clean, 2 bathrooms, needs Saturday morning"></textarea>
+
+        <label>Price / estimate</label>
+        <input id="price" placeholder="$180" />
+
+        <label>Tone</label>
+        <select id="tone">
+          <option>friendly and professional</option>
+          <option>short and direct</option>
+          <option>warm and premium</option>
+        </select>
+
+        <div class="actions">
+          <button onclick="generate()">Generate</button>
+          <button class="secondary" onclick="copyOutput()">Copy</button>
+        </div>
+
+        <h3>Output</h3>
+        <div class="out" id="output">Your quote will appear here.</div>
+      </div>
+    </section>
+
+    <footer>
+      Replace the Pro Templates button link with your Stripe Payment Link, Gumroad product, Ko-fi, or Payhip checkout URL.
+    </footer>
+  </div>
+
+  <script>
+    const PAYMENT_LINK = "PASTE_YOUR_PAYMENT_LINK_HERE";
+    document.getElementById("buyLinkTop").href = PAYMENT_LINK === "PASTE_YOUR_PAYMENT_LINK_HERE" ? "#app" : PAYMENT_LINK;
+
+    function generate() {
+      const business = document.getElementById("business").value;
+      const customer = document.getElementById("customer").value || "there";
+      const details = document.getElementById("details").value || "the job details you shared";
+      const price = document.getElementById("price").value || "the estimate";
+      const tone = document.getElementById("tone").value;
+
+      let intro = tone === "short and direct"
+        ? `Hi ${customer}, thanks for the details.`
+        : tone === "warm and premium"
+          ? `Hi ${customer}, thank you for considering us. Based on what you shared, we would be happy to help.`
+          : `Hi ${customer}, thanks so much for reaching out. I’d be happy to help.`;
+
+      const quote =
+`${intro}
+
+Quote:
+Based on this request — ${details} — the estimated price is ${price}.
+
+What is included:
+• Clear communication before the job
+• Professional service from a reliable ${business}
+• A quick confirmation before we finalize the booking
+
+Next step:
+Please reply “Yes” and your preferred day/time, and I’ll confirm the booking.
+
+Follow-up text if they do not reply:
+Hi ${customer}, just checking in to see if you still want to move forward with the ${business} service. I can still hold a spot if you want to book.
+
+Review request after the job:
+Hi ${customer}, thank you again for choosing us. If you were happy with the service, would you mind leaving a quick review? It really helps a small business grow.`;
+
+      document.getElementById("output").textContent = quote;
+    }
+
+    async function copyOutput() {
+      const text = document.getElementById("output").textContent;
+      await navigator.clipboard.writeText(text);
+      alert("Copied!");
+    }
+  </script>
+</body>
+</html>
